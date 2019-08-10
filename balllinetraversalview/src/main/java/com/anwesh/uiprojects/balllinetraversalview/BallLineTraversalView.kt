@@ -213,4 +213,13 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : BallLineTraversalView {
+            val view : BallLineTraversalView = BallLineTraversalView(activity)
+            activity.setContentView(view)
+            return view 
+        }
+    }
 }
