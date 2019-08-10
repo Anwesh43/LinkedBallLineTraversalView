@@ -13,7 +13,6 @@ import android.graphics.Canvas
 import android.graphics.Color
 
 val nodes : Int = 5
-val lines : Int = 4
 val scGap : Float = 0.05f
 val scDiv : Double = 0.51
 val strokeFactor : Int = 90
@@ -64,7 +63,7 @@ fun Canvas.drawBLTNode(i : Int, scale : Float, paint : Paint) {
 class BallLineTraversalView(ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    
+
     override fun onDraw(canvas : Canvas) {
 
     }
@@ -76,5 +75,25 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
             }
         }
         return true
+    }
+
+    data class State(var scale : Float = 0f, var dir : Float = 0f, var prevScale : Float = 0f) {
+
+        fun update(cb : (Float) -> Unit) {
+            scale += scale.updateValue(dir, 1, 2)
+            if (Math.abs(scale - prevScale) > 1) {
+                scale = prevScale + dir
+                dir = 0f
+                prevScale = scale
+                cb(prevScale)
+            }
+        }
+
+        fun startUpdating(cb : () -> Unit) {
+            if (dir == 0f) {
+                dir = 1f - 2 * prevScale
+                cb()
+            }
+        }
     }
 }
