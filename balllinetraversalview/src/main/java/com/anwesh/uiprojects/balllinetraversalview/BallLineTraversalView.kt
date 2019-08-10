@@ -142,6 +142,7 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
 
         fun draw(canvas : Canvas, paint : Paint) {
             canvas.drawBLTNode(i, state.scale, paint)
+            prev?.draw(canvas, paint)
         }
 
         fun update(cb : (Int, Float) -> Unit) {
@@ -176,7 +177,7 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
             curr.draw(canvas, paint)
         }
 
-        fun udpate(cb : (Int, Float) -> Unit) {
+        fun update(cb : (Int, Float) -> Unit) {
             curr.update {i, scl ->
                 curr = curr.getNext(dir) {
                     dir *= -1
@@ -187,6 +188,28 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
 
         fun startUpdating(cb : () -> Unit) {
             curr.startUpdating(cb)
+        }
+    }
+
+    data class Renderer(var view : BallLineTraversalView) {
+
+        private val blt : BallLineTraversal = BallLineTraversal(0)
+        private var animator : Animator = Animator(view)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            blt.draw(canvas, paint)
+            animator.animate {
+                blt.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            blt.startUpdating {
+                animator.start()
+            }
         }
     }
 }
