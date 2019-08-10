@@ -60,3 +60,21 @@ fun Canvas.drawBLTNode(i : Int, scale : Float, paint : Paint) {
     paint.strokeWidth = Math.min(w, h) / strokeFactor
     drawBallLineTraversal(w + offsetW * (i + 1), size, scale, paint)
 }
+
+class BallLineTraversalView(ctx : Context) : View(ctx) {
+
+    private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    
+    override fun onDraw(canvas : Canvas) {
+
+    }
+
+    override fun onTouchEvent(event : MotionEvent) : Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN  -> {
+
+            }
+        }
+        return true
+    }
+}
