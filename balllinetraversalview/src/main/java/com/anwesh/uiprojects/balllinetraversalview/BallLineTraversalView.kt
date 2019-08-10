@@ -11,6 +11,7 @@ import android.content.Context
 import android.graphics.Paint
 import android.graphics.Canvas
 import android.graphics.Color
+import android.util.Log
 
 val nodes : Int = 5
 val scGap : Float = 0.05f
@@ -44,7 +45,7 @@ fun Canvas.drawBallLineTraversal(w : Float, size : Float, scale : Float, paint :
     val sc22 : Float = sc2.divideScale(1, 2)
     val x1 : Float = w * sc21
     val x2 : Float = w * sc22
-    drawBall(w * sc21, r , sc1, paint)
+    drawBall(x1, r , sc1, paint)
     drawLine(x2, 0f, x1, 0f, paint)
 }
 
@@ -57,7 +58,11 @@ fun Canvas.drawBLTNode(i : Int, scale : Float, paint : Paint) {
     paint.color = foreColor
     paint.strokeCap = Paint.Cap.ROUND
     paint.strokeWidth = Math.min(w, h) / strokeFactor
-    drawBallLineTraversal(w + offsetW * (i + 1), size, scale, paint)
+    val yGap : Float = h / (nodes + 1)
+    save()
+    translate(size / rFactor, yGap * (i + 1))
+    drawBallLineTraversal(w / 2 + offsetW * (i + 1), size, scale, paint)
+    restore()
 }
 
 class BallLineTraversalView(ctx : Context) : View(ctx) {
@@ -82,6 +87,7 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
 
         fun update(cb : (Float) -> Unit) {
             scale += scale.updateValue(dir, 1, 2)
+            Log.d("scale", "$scale")
             if (Math.abs(scale - prevScale) > 1) {
                 scale = prevScale + dir
                 dir = 0f
@@ -102,6 +108,7 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
 
         fun animate(cb : () -> Unit) {
             if (animated) {
+                cb()
                 try {
                     Thread.sleep(50)
                     view.invalidate()
@@ -219,7 +226,7 @@ class BallLineTraversalView(ctx : Context) : View(ctx) {
         fun create(activity : Activity) : BallLineTraversalView {
             val view : BallLineTraversalView = BallLineTraversalView(activity)
             activity.setContentView(view)
-            return view 
+            return view
         }
     }
 }
